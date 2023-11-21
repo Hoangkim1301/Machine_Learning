@@ -15,12 +15,14 @@ def DBSCAN(ds, eps, min_pts):
     labels = [None] * len(ds)
     # First cluster id (i.e. noise)
     c = 0 
-    for p in range(0, len(ds)):
+    for p in range(len(ds)):
         # Put your code here
         if labels[p] is not None: #skip if this point already visited
             continue
         nbs = regionQuery(ds, p, eps) #find all the neighrbour point inside distance eps
+        
         if len(nbs) >= min_pts:
+            print(f"Check: {nbs}")
             c+=1
             expandCluster(ds, labels, p, nbs, c, eps, min_pts)
         else:
@@ -47,20 +49,22 @@ def expandCluster(ds, labels, p, nbs, c, eps, min_pts):
     labels[p] = c #labels the point with cluster c
 
     i = 0
-    while i in range(len(nbs)):
-        point = nbs[i]
-        point_index = find_index(ds,point)
+    while i < len(nbs):
+        #print(f"Check nbs: {nbs}")
+        point_index  = nbs[i]
         if(point_index==-1):
-            print("Error: This point doesn't exist") 
-        if labels[point_index] is not None or labels[point_index] != 'noise':    #if the point is already visited
+            print(f"Error: This point doesn't exist") 
             continue
+        
         elif labels[point_index] is None  :
+            
             labels[point_index] = c
             point_nbs = regionQuery(ds, point_index, eps)
             if len(point_nbs) >= min_pts:
                 nbs += point_nbs
         elif labels[point_index] == 'noise':
             labels[point_index] = c
+        i+=1
             
             
     
@@ -78,13 +82,15 @@ def regionQuery(ds, q, eps):
     nbs = []
     # Put your code here
     for i in range(len(ds)):
+        if i==q:
+            continue
         if np.linalg.norm(np.array(ds[q]) - np.array(ds[i])) <= eps: #if the distance between point q and i <= eps
             nbs.append(i)
     
     return(nbs)
 
 def find_index(ds,target):
-    # Find the index
+    # Find the index 
     index = next((i for i, point in enumerate(ds) if np.array_equal(point, target)), -1)
     # Print the result
     print(f"The index of {target} in ds is: {index}")
@@ -99,6 +105,8 @@ if __name__ == "__main__":
         np.array([3, 4]), 
         np.array([5, 6]), 
         np.array([10,11]),
+        np.array([11,12]),
+        np.array([10,12]),
         np.array([1, 3]),
         np.array([2, 4]),
         np.array([3, 5]),
@@ -106,24 +114,27 @@ if __name__ == "__main__":
         np.array([5, 7]),
         np.array([6, 8]) ]
 
+    #find_index(ds,np.array([10,11]))
+    #print(regionQuery(ds,2,2))
+    labels = DBSCAN(ds, 2, 2) 
     # Extract x and y coordinates from the data points
     x = [point[0] for point in ds]
     y = [point[1] for point in ds]
+    
+    # Generate a random color for each point
+    colors = [np.random.rand(3,) for _ in range(len(ds))]  # Creates random RGB colors
 
     # Plot the data points
     plt.scatter(x, y)
     plt.xlabel('X')
     plt.ylabel('Y')
     plt.title('Data Points')
+    # Annotate each point with its coordinates
+    for i in range(len(ds)):
+        plt.text(x[i], y[i], f'({x[i]}, {y[i]}, \nCluster:{labels[i]})', fontsize=9, ha='right')
     plt.show()
     
-    ''''
-    index = regionQuery(ds, 0, 5)
-
-    for i in range(len(index)):
-        print(ds[index[i]])
-       '''
+    
+    
        
-    DBSCAN(ds, 2, 2) 
-    find_index(ds,np.array([1,2]))
     
