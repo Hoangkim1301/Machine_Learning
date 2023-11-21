@@ -112,29 +112,46 @@ if __name__ == "__main__":
         np.array([3, 5]),
         np.array([4, 6]),
         np.array([5, 7]),
-        np.array([6, 8]) ]
+        np.array([6, 8]),
+        np.array([10,1])]
 
     #find_index(ds,np.array([10,11]))
     #print(regionQuery(ds,2,2))
     labels = DBSCAN(ds, 2, 2) 
+    
+    
+   
     # Extract x and y coordinates from the data points
     x = [point[0] for point in ds]
     y = [point[1] for point in ds]
-    
-    # Generate a random color for each point
-    colors = [np.random.rand(3,) for _ in range(len(ds))]  # Creates random RGB colors
 
-    # Plot the data points
-    plt.scatter(x, y)
+    # Find the unique cluster labels
+    unique_labels = set(labels)
+
+    # Generate a random color for each cluster
+    colors = {label: np.random.rand(3,) for label in unique_labels} #RGB=3 colors
+
+    # Plot the data points, colored by cluster
+    for label in unique_labels:
+        # Points in the current cluster
+        cluster_points = [(x[i], y[i]) for i in range(len(labels)) if labels[i] == label]
+
+        # Separate x and y coordinates
+        cluster_x = [point[0] for point in cluster_points]
+        cluster_y = [point[1] for point in cluster_points]
+
+        # Plot the cluster points
+        plt.scatter(cluster_x, cluster_y, color=colors[label], label=f'Cluster {label}')
+
+    # Add annotations, labels, and title
+    for i in range(len(ds)):
+        plt.text(x[i], y[i], f'({x[i]}, {y[i]}), \nCluster:{labels[i]}', fontsize=9, ha='right')
+
     plt.xlabel('X')
     plt.ylabel('Y')
-    plt.title('Data Points')
-    # Annotate each point with its coordinates
-    for i in range(len(ds)):
-        plt.text(x[i], y[i], f'({x[i]}, {y[i]}, \nCluster:{labels[i]})', fontsize=9, ha='right')
+    plt.title('Data Points by Cluster')
+    plt.legend()
     plt.show()
-    
-    
     
        
     
