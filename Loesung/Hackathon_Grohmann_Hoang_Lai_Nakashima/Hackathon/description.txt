@@ -1,0 +1,18 @@
+1. Initialisierung
+- Die .csv-Dateien sind zuerst auf Jupyter Notebooks als separate Dataframes geladen.
+- Der Verkaufspreis ist extrahiert.
+- Die Dataframes sind auf eine zusammengestellt.
+
+2. Datenvorverarbeitung
+- Da es in der Datei schon mehrere Attributen gibt und es nicht sicher ist, welche Attributen auf den Verkaufspreis einen Einfluss haben, wird nun zuerst Random Forest durchgeführt, um den relevanten Attributen herauszufinden.
+- Da viele Spalten kategorische Variablen haben, werden diese zunächst mittels Label Encoder in numerische Werte umgewandelt, um für den Random Forest vorzubereiten.
+- Danach gab es noch viele NaN-Werte, die für das Modell problematisch ist. Diese werden durch den Durchschnitte hinzufügt.
+- Am Ende werden Train-daten und Test-daten wieder auseinander zerlegt.
+
+3. Modell:
+- Der RandomForest wird zunächst genutzt, um wichtige Merkmale zu finden.
+- Dieser Modell und GradientBoostingRegressor wurden in "Machine Learning.ipynb" unter "preparations" ausprobiert.
+	- Dort wurden die Train-daten als train und test geschnitten.
+	- RandomForest hatte einen R2-Wert von 0.87 aus dem "Test"-set.
+	- GradientBoostingRegressor hatte einen höchsten R2-Wert von 0.92 aus dem "Test"-set, wenn 10 wichtigsten Merkmale ausgewählt sind.
+- Deshalb wird GradientBoostingRegressor mit 10 wichtigsten Merkmalen in unserem Modell weiter ausgeführt.
